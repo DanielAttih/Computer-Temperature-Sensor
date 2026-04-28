@@ -43,11 +43,13 @@ STM32 ↔ SWD (program/debug)
 - 256 KB Flash / 64 KB RAM
 - Operates at 1.7–3.6 V
 - LQFP-48 package
-    
-https://www.st.com/en/microcontrollers-microprocessors/stm32l432kc.html#overview  
 
-Here is the development board, but of course, for the PCB, we will be using the chip only:
-https://www.tme.com/il/en/details/nucleo-l432kc/stm-development-kits/stmicroelectronics/
+Design Choice:
+- Using **bare IC (not development board)**
+
+Link(s):
+- https://www.st.com/en/microcontrollers-microprocessors/stm32l432kc.html#overview  
+- https://www.tme.com/il/en/details/nucleo-l432kc/stm-development-kits/stmicroelectronics/
 
 ---
 
@@ -67,8 +69,9 @@ Design choices:
 - Address pins (A0, A1, A2) tied to GND
 - ALERT pin not used
 
-📷 Image:  
-https://ww1.microchip.com/downloads/en/DeviceDoc/25095A.pdf  
+ Link(s):
+- https://ww1.microchip.com/downloads/en/DeviceDoc/25095A.pdf 
+- https://www.digikey.com/en/products/detail/microchip-technology/MCP9808-E-MS/2802083
 
 ---
 
@@ -91,9 +94,8 @@ Pinout:
 3 - SCL
 4 - SDA
 
-
-📷 Image:  
-https://cdn-shop.adafruit.com/970x728/326-00.jpg  
+Link:
+https://www.amazon.com/UCTRONICS-SSD1306-Self-Luminous-Display-Raspberry/dp/B072Q2X2LL
 
 ---
 
@@ -101,15 +103,15 @@ https://cdn-shop.adafruit.com/970x728/326-00.jpg
 
 - **Green LED** → normal temperature  
 - **Red LED** → high temperature  
-- **Power LED** → board powered  
+- **Blue Power LED** → board powered on  
 
 Design:
 - SMD 0805 LEDs
 - Each LED has a **330 Ω resistor**
 - Status LEDs controlled by STM32 GPIO
 
-📷 Image:  
-https://cdn.sparkfun.com//assets/parts/1/0/8/9/9/15193-LED_Red_0805.jpg  
+Link(s):
+https://www.digikey.com/en/products/filter/led-indication-discrete/0805/105?s=N4IgjCBcpgTAnBaIDGUBmBDANgZwKYA0IAbgHZQAuATgK5EgD2UA2iAMzzuwAcIAusQAOlKCADKNAJZkA5iAC%2BSoA
 
 ---
 
@@ -128,8 +130,8 @@ Pinout:
 - Standard STM32 debug interface
 - Reliable and simple
 
-📷 Image:  
-https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Pin_header_2.54mm.jpg/640px-Pin_header_2.54mm.jpg  
+Link(s):
+
 
 ---
 
@@ -137,7 +139,7 @@ https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Pin_header_2.54mm.jpg/
 
 #### Input
 
-**Micro-USB (Type-B)**  
+**Micro-USB (Type-B): Amphenol 10118194-0001LF**  
 - Used for **power only**
 - Provides 5V
 
@@ -146,9 +148,9 @@ VBUS → 5V rail
 GND → GND
 D+ / D- → NC
 
-
-📷 Image:  
-https://cdn.sparkfun.com//assets/parts/1/1/4/7/4/14417-Micro_USB_B_Connector.jpg  
+Link(s):
+- https://www.amphenol-cs.com/product/101181940001lf.html
+- https://www.digikey.com/en/products/detail/amphenol-cs-fci/10118194-0001LF/2785389
 
 ---
 
@@ -163,9 +165,9 @@ Capacitors:
 CIN = 1 µF (input)
 COUT = 1 µF (output)
 
-
-📷 Image:  
-https://www.diodes.com/assets/Package-Images/SOT25.png  
+Link(s):
+- https://www.digikey.com/en/products/detail/diodes-incorporated/AP2112K-3-3TRG1/4470746
+- https://www.mouser.com/ProductDetail/Diodes-Incorporated/AP2112K-3.3TRG1?qs=x6A8l6qLYDDPYHosCdzh%2FA%3D%3D&srsltid=AfmBOop9CtVNQ4PzkGa5PHwTKG7HFoA91sVGvN81iwmOFJOXiIA_Ls7D
 
 ---
 
@@ -179,7 +181,6 @@ https://www.diodes.com/assets/Package-Images/SOT25.png
 - LEDs
 - SWD reference
 
-
 ---
 
 ## Supporting Components
@@ -188,7 +189,6 @@ https://www.diodes.com/assets/Package-Images/SOT25.png
 Each VDD → 0.1 µF → GND
 VDDA → 0.1 µF → GND
 3.3V rail → 4.7 µF bulk capacitor
-
 
 ---
 
@@ -208,12 +208,10 @@ SCL → 4.7 kΩ → 3.3V
 ### Reset Circuit
 NRST → pushbutton → GND
 
-
 ---
 
 ### Boot Configuration
 BOOT0 → 10 kΩ → GND
-
 
 ---
 
@@ -224,7 +222,6 @@ Added for debugging:
 GND
 SDA
 SCL
-
 
 ---
 
@@ -242,6 +239,6 @@ SCL
 ## Notes
 
 - STM32 internal clock is used (no external crystal)
-- OLED and sensor share I2C bus
+- OLED and sensor share the I2C bus
 - Sensor placement is critical for accurate readings
 - Designed for simplicity and first-pass success
