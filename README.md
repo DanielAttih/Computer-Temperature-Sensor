@@ -1,5 +1,6 @@
 # Computer-Temperature-Sensor
 Reads the internal temperature of my PC and displays the value on an OLED. Includes 2 LEDs as visual feedback.
+https://chatgpt.com/c/69e398d1-85f8-83ea-8de9-20dd3073235b 
 
 ## Steps
 1. The sensor measures the air inside the PC.
