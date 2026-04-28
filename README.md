@@ -43,9 +43,11 @@ STM32 ↔ SWD (program/debug)
 - 256 KB Flash / 64 KB RAM
 - Operates at 1.7–3.6 V
 - LQFP-48 package
+    
+https://www.st.com/en/microcontrollers-microprocessors/stm32l432kc.html#overview  
 
-📷 Image:  
-https://www.st.com/resource/en/package_outline/lqfp48.png  
+Here is the development board, but of course, for the PCB, we will be using the chip only:
+https://www.tme.com/il/en/details/nucleo-l432kc/stm-development-kits/stmicroelectronics/
 
 ---
 
