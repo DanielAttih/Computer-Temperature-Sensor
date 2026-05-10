@@ -42,7 +42,7 @@ STM32 ↔ SWD (program/debug)
 - Cortex-M4 @ 80 MHz
 - 256 KB Flash / 64 KB RAM
 - Operates at 1.7–3.6 V
-- LQFP-48 package
+- UFQFPN-32 package (5×5 mm, 32-pin)
 
 Design Choice:
 - Using **bare IC (not development board)**
@@ -67,7 +67,7 @@ Design choices:
 - Placed **at PCB edge** for accurate air measurement
 - Includes **0.1 µF decoupling capacitor**
 - Address pins (A0, A1, A2) tied to GND
-- ALERT pin not used
+- ALERT pin left floating (not used)
 
  Link(s):
 - https://ww1.microchip.com/downloads/en/DeviceDoc/25095A.pdf 
@@ -107,7 +107,7 @@ https://www.amazon.com/UCTRONICS-SSD1306-Self-Luminous-Display-Raspberry/dp/B072
 
 Design:
 - SMD 0805 LEDs
-- Each LED has a **330 Ω resistor**
+- Each LED has a **150 Ω resistor** -> ~ 8 mA per LED at 3.3V (assuming ~2.1V forward voltage)
 - Status LEDs controlled by STM32 GPIO
 
 Link(s):
@@ -162,8 +162,9 @@ Link(s):
 - Max current: 600 mA
 
 Capacitors:
-CIN = 1 µF (input)
-COUT = 1 µF (output)
+CIN = 1 µF (input, on 5V rail side)
+COUT = 1 µF (output, on 3.3V rail side)
+CBULK = 10 µF (on 5V rail, before LDO, for USB inrush)
 
 Link(s):
 - https://www.digikey.com/en/products/detail/diodes-incorporated/AP2112K-3-3TRG1/4470746
@@ -172,6 +173,7 @@ Link(s):
 ---
 
 ### Power Distribution
+
 5V → LDO → 3.3V rail
 
 3.3V powers:
@@ -183,12 +185,27 @@ Link(s):
 
 ---
 
+### Power Budget
+
+**Component**     **Current(approx.)**
+STM32L432 active    ~10 mA
+SSD1306 OLED        ~20 mA
+MCP9808             ~0.4 mA
+3 x LEDs            ~(3 x 8 mA) = 24 mA
+**Total**         **~54 mA**
+
+Well within the AP2112K's 600 mA rating
+
 ## Supporting Components
 
 ### STM32 Decoupling
-Each VDD → 0.1 µF → GND
-VDDA → 0.1 µF → GND
-3.3V rail → 4.7 µF bulk capacitor
+- One 0.1 µF cap per VDD pin, placed as close to each pin as possible
+- One 0.1 µF cap on VDDA (analog supply), plus 1 µF on VDDA
+- 4.7 µF bulk capacitor on the 3.3V rail
+
+Note: VDDA must be powered and decoupled even if ADC/DAC are not used
+
+Part: Generic 0402 or 0603 MLCC, 0.1 µF / 10V / X5R or better
 
 ---
 
@@ -206,12 +223,25 @@ SCL → 4.7 kΩ → 3.3V
 ---
 
 ### Reset Circuit
-NRST → pushbutton → GND
+
+Pushbutton: Panasonic EVQ-PUJO2K (or equivalent SMD 3 x 4 mm)
+
+- NRST → pushbutton → GND
+- No additional capacitor needed (STM32 has an internal filter on NRST)
+
+Link(s):
+https://www.digikey.com/en/products/detail/panasonic-electronic-components/EVQ-PUJ02K/286348
 
 ---
 
 ### Boot Configuration
-BOOT0 → 10 kΩ → GND
+
+**BOOTO pull-down resistor: 10kΩ (0402 or 0603)**
+
+- BOOT0 → 10 kΩ → GND
+- Keeps STM32 in normal flash boot mode
+
+Part: Generic 0402 or 0603 thick film resistor 10kΩ
 
 ---
 
@@ -233,12 +263,18 @@ SCL
 - Board size: ~50 mm × 40 mm
 - Shape: rectangular
 - 4 × M3 mounting holes
+- Board version number in silkscreen (v1.0)
+- Component labels and header pins labels in silkscreen
 
 ---
+
+## Pin Assignments
+
 
 ## Notes
 
 - STM32 internal clock is used (no external crystal)
 - OLED and sensor share the I2C bus
-- Sensor placement is critical for accurate readings
+- Sensor placement is critical for accurate readings (placed at PCB edge)
 - Designed for simplicity and first-pass success
+- Pin assignments to be defined during schematic phase using STM32CubeMX
