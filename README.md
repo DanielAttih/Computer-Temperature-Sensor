@@ -187,7 +187,7 @@ Link(s):
 
 ### Power Budget
 
-**Component**     **Current(approx.)**
+**Component**     
 - STM32L432 active    ~10 mA
 - SSD1306 OLED        ~20 mA
 - MCP9808             ~0.4 mA
