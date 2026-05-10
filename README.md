@@ -188,11 +188,11 @@ Link(s):
 ### Power Budget
 
 **Component**     **Current(approx.)**
-STM32L432 active    ~10 mA
-SSD1306 OLED        ~20 mA
-MCP9808             ~0.4 mA
-3 x LEDs            ~(3 x 8 mA) = 24 mA
-**Total**         **~54 mA**
+- STM32L432 active    ~10 mA
+- SSD1306 OLED        ~20 mA
+- MCP9808             ~0.4 mA
+- 3 x LEDs            ~(3 x 8 mA) = 24 mA
+- **Total**         **~54 mA**
 
 Well within the AP2112K's 600 mA rating
 
