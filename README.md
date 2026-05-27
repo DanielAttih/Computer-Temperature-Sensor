@@ -100,9 +100,12 @@ https://www.amazon.com/UCTRONICS-SSD1306-Self-Luminous-Display-Raspberry/dp/B072
 
 ### LEDs
 
-- **Green LED** → normal temperature  
-- **Red LED** → high temperature  
-- **Blue Power LED** → board powered on  
+- **Green LED Solid** → normal temperature  
+- **Red LED Solid** → high temperature  
+- **Blue Power LED Solid** → board powered on
+
+- **Red LED Blinking** → MCP9808 initialization failed  
+- **Blue Power LED Blinking** → OLED initialization failed
 
 Design:
 - SMD 0805 LEDs
