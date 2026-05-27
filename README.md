@@ -31,7 +31,6 @@ STM32 ↔ I2C ↔ SSD1306 (OLED)
 STM32 → LEDs (status)
 STM32 ↔ SWD (program/debug)
 
-
 ---
 
 ## Parts
@@ -278,3 +277,7 @@ SCL
 - Sensor placement is critical for accurate readings (placed at PCB edge)
 - Designed for simplicity and first-pass success
 - Pin assignments to be defined during schematic phase using STM32CubeMX
+
+---
+
+## Functionality Flow Chart
