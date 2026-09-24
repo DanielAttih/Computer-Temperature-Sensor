@@ -44,7 +44,8 @@ STM32 ↔ SWD (program/debug)
 - UFQFPN-32 package (5×5 mm, 32-pin)
 
 Design Choice:
-- Using **bare IC (not development board)**
+- Using **bare IC (not a development board)**
+- For the development board, use "STM32 Nucleo-32 Development Board with STM32L432KC MCU"
 
 Link(s):
 - https://www.st.com/en/microcontrollers-microprocessors/stm32l432kc.html#overview  
