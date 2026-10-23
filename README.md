@@ -147,7 +147,21 @@ Pinout:
 
 - Standard STM32 debug interface
 - Reliable and simple
-- The UART debug output used during development (PuTTY via the Nucleo's ST-LINK) is **not** carried over to the PCB
+- Flashing and debugging use an external ST-LINK probe connected to this header
+
+---
+
+### Debug UART Header
+
+**2-pin header (1×2, 2.54 mm)**
+
+Pinout:
+1. TX (PA2, USART2_TX)
+2. GND
+
+- Connect a 3.3V USB-serial adapter to view debug messages in a terminal (115200 baud, 8N1), as was done with PuTTY on the Nucleo
+- Transmit only (RX is not used)
+- Used for bring-up and fault messages (for example sensor and OLED init status)
 
 ---
 
@@ -308,12 +322,13 @@ Defined in STM32CubeMX and tested on the Nucleo-L432KC. To be re-verified agains
 | Green LED | PA3 | GPIO output |
 | Red LED | PA4 | GPIO output |
 | Blue LED | PA1 | GPIO output |
+| Debug UART TX | PA2 | USART2_TX (to debug header) |
 | SWDIO | PA13 | SWD |
 | SWCLK | PA14 | SWD |
 | NRST | NRST | Reset |
 | BOOT0 | PH3-BOOT0 | Pulled to GND |
 
-Development-only (not on the PCB): USART2 TX on PA2 (Nucleo ST-LINK virtual COM port, used for PuTTY debug output).
+On the Nucleo-L432KC, USART2 TX (PA2) reaches the PC through the board's ST-LINK virtual COM port. On the custom PCB it goes to the debug UART header and needs a USB-serial adapter.
 
 ---
 
