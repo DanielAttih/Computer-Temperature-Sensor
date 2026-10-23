@@ -74,12 +74,14 @@ Link(s):
 
 Design choices:
 - Using **bare IC (not breakout)**
+- Prototyping used the MCP9808 Breakout Board from Adafruit
 - Placed **at PCB edge** for accurate air measurement
 - Includes **0.1 µF decoupling capacitor**
 - Address pins (A0, A1, A2) tied to GND
 - ALERT pin left floating (not used)
 
 Link(s):
+- Breakout Board: https://www.adafruit.com/product/1782
 - https://ww1.microchip.com/downloads/en/DeviceDoc/25095A.pdf
 - https://www.digikey.com/en/products/detail/microchip-technology/MCP9808-E-MS/2802083
 
