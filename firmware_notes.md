@@ -118,6 +118,7 @@ Why the I2C3 re-init matters: pulling the wire mid-transaction left the I2C peri
 
 - **PA5 and PA6 on the Nucleo-32:** solder bridges SB16 and SB18 tie PA5 to PB7 (I2C1 SDA) and PA6 to PB6 (I2C1 SCL). A blue LED on PA5 held the OLED's SDA line and made OLED init fail. Fix: use other pins on the dev board. The custom PCB has no such bridges, so this is a Nucleo-only issue.
 - **UART for PuTTY:** the ST-LINK virtual COM port is USART2 on PA2, not USART1 on PA9/PA10.
+- **Clocks (changed 2026-10-22):** LSE and HSE are both disabled, so no external crystals are needed. The MCU runs from the internal MSI (4 MHz) through the PLL (x16, /1, /2) at 32 MHz. MSI is no longer auto-calibrated against the 32 kHz crystal, so it is accurate to about 1% instead of about 0.25%, which does not matter for UART, I2C or the 500 ms loop. PA0, PC14 and PC15 are free pins. `Error_Handler()` can no longer hang on an oscillator that fails to start.
 - **`HAL_OK` is 0, not true.** Compare with `== HAL_OK`, never `if (HAL_...())`.
 - **Function calls need to be inside a function.** A call at file scope gives "initializer is not constant".
 - **`%f` in printf** needs "Use float with printf from newlib-nano" enabled in the project settings.
@@ -135,5 +136,6 @@ Why the I2C3 re-init matters: pulling the wire mid-transaction left the I2C peri
 ## 9. For the schematic phase
 - I2C buses are separate: sensor on I2C3, OLED on I2C1. Each needs pull-ups (check the breakout boards had them and whether the PCB needs its own).
 - LEDs are driven directly from MCU pins through series resistors (values in the project documentation).
-- UART debug output is development-only and does not go on the PCB.
+- Debug UART: add a 2-pin header (PA2 TX + GND, transmit only) so a 3.3V USB-serial adapter can show the debug text in a terminal. The USB connector is power-only, so the text cannot go over that cable.
+- Flashing and debugging: use an external ST-LINK probe on the 5-pin SWD header (3.3V, SWDIO, GND, SWCLK, NRST). Using the Nucleo-32's own ST-LINK for an external board was not confirmed.
 - Avoid carrying the Nucleo's PA5/PA6 problem over: it does not exist on the custom board.
