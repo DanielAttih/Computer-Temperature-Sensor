@@ -1,0 +1,28 @@
+﻿# STM32CubeIDE build output and local settings
+firmware/**/Debug/
+firmware/**/Release/
+firmware/**/.settings/
+*.o
+*.d
+*.elf
+*.map
+*.list
+*.su
+*.cyclo
+
+# KiCad backups, locks, and caches
+hardware/**/*-backups/
+hardware/**/*.kicad_prl
+hardware/**/fp-info-cache
+hardware/**/_autosave-*
+hardware/**/*.bak
+hardware/**/*.lck
+*~
+
+# OS junk
+Thumbs.db
+.DS_Store
+
+hardware/**/.history/
+
+hardware/**/.history/
