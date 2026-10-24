@@ -2,7 +2,7 @@
 
 Reads the internal air temperature of a PC case and displays the value on an OLED. LEDs give visual status feedback.
 
-**Status:** Firmware complete and tested on a Nucleo-L432KC dev board. Schematic and PCB layout in progress.
+**Status:** Firmware complete and tested on a Nucleo-L432KC dev board. Schematic complete (KiCad, ERC clean). PCB layout is next.
 
 ---
 
@@ -45,7 +45,7 @@ The sensor and the OLED are on **two separate I2C buses**, each with its own pul
 
 ### Microcontroller (MCU)
 
-**STM32L432KCT6**
+**STM32L432KCU6** (UFQFPN-32 package)
 - Cortex-M4 @ up to 80 MHz (this firmware runs it at 32 MHz from the internal MSI oscillator)
 - 256 KB Flash / 64 KB RAM
 - Operates at 1.7–3.6 V
@@ -78,7 +78,7 @@ Design choices:
 - Placed **at PCB edge** for accurate air measurement
 - Includes **0.1 µF decoupling capacitor**
 - Address pins (A0, A1, A2) tied to GND
-- ALERT pin left floating (not used)
+- ALERT pin left unconnected (no-connect flag in the schematic)
 
 Link(s):
 - Breakout Board: https://www.adafruit.com/product/1782
@@ -100,8 +100,10 @@ Design choices:
 - Using **module (not bare display)**
 - Connected via **1×4 header (2.54 mm)**
 - On its **own I2C bus** (I2C1), separate from the sensor
+- 4.7 µF capacitor (C11) from 3.3V to GND at the header's power pin, for the display's pulsed current
+- The module has its own pull-ups (measured roughly 11–12 kΩ on SDA and 19–20 kΩ on SCL, in circuit). The board still has its own 4.7 kΩ pull-ups on this bus; the two sets sit in parallel. Mark them DNP if the module's pull-ups are later confirmed sufficient.
 
-Pinout:
+Pinout (matches the printed order on the module):
 1. GND
 2. 3.3V
 3. SCL
@@ -148,6 +150,7 @@ Pinout:
 - Standard STM32 debug interface
 - Reliable and simple
 - Flashing and debugging use an external ST-LINK probe connected to this header
+- Pin 1 (3.3V) is a voltage reference tied to the board's 3.3V rail. On many ST-LINK V2 clones this pin is an output, so leave that wire disconnected when the board is already powered over USB.
 
 ---
 
@@ -175,8 +178,8 @@ Pinout:
 
 Connections:
 - VBUS → 5V rail
-- GND → GND
-- D+ / D- → NC
+- GND and shield → GND
+- D+ / D- / ID → NC (no-connect flags in the schematic)
 
 Link(s):
 - https://www.amphenol-cs.com/product/101181940001lf.html
@@ -190,11 +193,12 @@ Link(s):
 
 - Output: 3.3V
 - Max current: 600 mA
+- EN pin tied to VIN (regulator always enabled)
 
 Capacitors:
-- CIN = 1 µF (input, on 5V rail side)
-- COUT = 1 µF (output, on 3.3V rail side)
-- CBULK = 10 µF (on 5V rail, before LDO, for USB inrush)
+- CIN = 1 µF (C8, input, on 5V rail side)
+- COUT = 1 µF (C9, output, on 3.3V rail side)
+- CBULK = 10 µF, 16 V (C7, on 5V rail, before LDO, for USB inrush)
 
 Link(s):
 - https://www.digikey.com/en/products/detail/diodes-incorporated/AP2112K-3-3TRG1/4470746
@@ -234,9 +238,10 @@ Well within the AP2112K's 600 mA rating. (Red and green are never on together in
 ## Supporting Components
 
 ### STM32 Decoupling
-- One 0.1 µF cap per VDD pin, placed as close to each pin as possible
-- One 0.1 µF cap on VDDA (analog supply), plus 1 µF on VDDA
-- 4.7 µF bulk capacitor on the 3.3V rail
+- One 0.1 µF cap per VDD pin (C1 on pin 1, C2 on pin 17), placed as close to each pin as possible
+- One 0.1 µF cap (C3) on VDDA (pin 5), plus 1 µF (C4) on VDDA
+- 4.7 µF bulk capacitor (C5) on the 3.3V rail near the MCU
+- The exposed pad (pin 33) and VSS pins 16 and 32 all go to GND
 
 Note: VDDA must be powered and decoupled even if ADC/DAC are not used.
 
@@ -253,11 +258,13 @@ Two independent buses, one device each:
 | I2C1 | SSD1306 OLED | 0x3C | PB7 | PB6 |
 | I2C3 | MCP9808 | 0x18 | PB4 | PA7 |
 
-Pull-ups (one pair per bus):
-- SDA → 4.7 kΩ → 3.3V
-- SCL → 4.7 kΩ → 3.3V
+Pull-ups (one pair per bus, 4.7 kΩ to 3.3V):
+- I2C3 (MCP9808): R2 on SDA, R3 on SCL
+- I2C1 (OLED): R4 on SDA, R5 on SCL
 
-Note: the OLED module may have pull-up resistors on its own board. Check the module when finalizing the schematic.
+Note: the OLED module has its own pull-ups (see OLED Display above), so the I2C1 pair is in parallel with them. The MCP9808 is a bare IC, so its pull-ups are the only ones on I2C3.
+
+Net names in the schematic: `I2C1_SDA`, `I2C1_SCL`, `I2C3_SDA`, `I2C3_SCL`.
 
 ---
 
@@ -266,7 +273,9 @@ Note: the OLED module may have pull-up resistors on its own board. Check the mod
 Pushbutton: Panasonic EVQ-PUJ02K (or equivalent SMD 3 × 4 mm)
 
 - NRST → pushbutton → GND
-- No additional capacitor needed (STM32 has an internal filter on NRST)
+- 100 nF capacitor (C6) from NRST to GND, for noise immunity and button debounce
+- No external pull-up needed (NRST has an internal pull-up)
+- NRST also goes to SWD header pin 5 so the probe can reset the MCU
 
 Link(s):
 https://www.digikey.com/en/products/detail/panasonic-electronic-components/EVQ-PUJ02K/286348
@@ -277,8 +286,9 @@ https://www.digikey.com/en/products/detail/panasonic-electronic-components/EVQ-P
 
 **BOOT0 pull-down resistor: 10 kΩ (0402 or 0603)**
 
-- BOOT0 → 10 kΩ → GND
+- BOOT0 (pin 31, labeled PH3 on the symbol) → 10 kΩ (R1) → GND
 - Keeps STM32 in normal flash boot mode
+- Programming is over SWD only (USB is power-only), so no bootloader jumper
 
 Part: Generic 0402 or 0603 thick film resistor 10 kΩ
 
@@ -286,13 +296,41 @@ Part: Generic 0402 or 0603 thick film resistor 10 kΩ
 
 ### Test Points
 
-Added for debugging:
+Added for debugging (2 mm pads, TP1 to TP6):
 - 3.3V
 - GND
-- SDA
-- SCL
+- I2C1 SDA and SCL (OLED bus)
+- I2C3 SDA and SCL (sensor bus)
 
-(With two I2C buses, test points for both buses may be added during schematic design.)
+---
+
+## Schematic Reference Designators
+
+| Ref | Part | Value / note |
+|---|---|---|
+| U1 | STM32L432KCU6 | MCU |
+| U2 | AP2112K-3.3 | 3.3V LDO |
+| U3 | MCP9808 (MSOP-8) | Temperature sensor |
+| J_USB | Micro-USB (Amphenol 10118194-0001LF) | Power only |
+| J_SWD | 1×5 header | SWD |
+| J_OLED | 1×4 header | OLED module |
+| J_UART | 1×2 header | Debug TX + GND |
+| SW1 | Panasonic EVQ-PUJ series pushbutton | Reset |
+| D1, D2, D3 | 0805 LEDs | Green (PA3), red (PA4), blue (PA1) |
+| R1 | 10 kΩ | BOOT0 pull-down |
+| R2, R3 | 4.7 kΩ | I2C3 SDA, SCL pull-ups |
+| R4, R5 | 4.7 kΩ | I2C1 SDA, SCL pull-ups |
+| R6, R7, R8 | 220 Ω | Green, red, blue LED series resistors |
+| C1, C2, C3 | 100 nF | MCU VDD (×2) and VDDA decoupling |
+| C4 | 1 µF | VDDA |
+| C5 | 4.7 µF | 3.3V bulk near MCU |
+| C6 | 100 nF | NRST |
+| C7 | 10 µF, 16 V | 5V bulk |
+| C8 | 1 µF | LDO input |
+| C9 | 1 µF | LDO output |
+| C10 | 100 nF | MCP9808 decoupling |
+| C11 | 4.7 µF | OLED header supply |
+| TP1 to TP6 | 2 mm test pads | 3.3V, GND, I2C1 SDA/SCL, I2C3 SDA/SCL |
 
 ---
 
@@ -311,22 +349,24 @@ Added for debugging:
 
 ## Pin Assignments
 
-Defined in STM32CubeMX and tested on the Nucleo-L432KC. To be re-verified against the final schematic.
+Defined in STM32CubeMX and tested on the Nucleo-L432KC. Matches the final schematic (ERC clean, 2026-10-23).
 
-| Function | Pin | Peripheral / Mode |
-|---|---|---|
-| OLED SDA | PB7 | I2C1_SDA |
-| OLED SCL | PB6 | I2C1_SCL |
-| MCP9808 SDA | PB4 | I2C3_SDA |
-| MCP9808 SCL | PA7 | I2C3_SCL |
-| Green LED | PA3 | GPIO output |
-| Red LED | PA4 | GPIO output |
-| Blue LED | PA1 | GPIO output |
-| Debug UART TX | PA2 | USART2_TX (to debug header) |
-| SWDIO | PA13 | SWD |
-| SWCLK | PA14 | SWD |
-| NRST | NRST | Reset |
-| BOOT0 | PH3-BOOT0 | Pulled to GND |
+| Function | MCU pin | Package pin | Peripheral / Mode | Schematic net |
+|---|---|---|---|---|
+| OLED SDA | PB7 | 30 | I2C1_SDA | `I2C1_SDA` |
+| OLED SCL | PB6 | 29 | I2C1_SCL | `I2C1_SCL` |
+| MCP9808 SDA | PB4 | 27 | I2C3_SDA | `I2C3_SDA` |
+| MCP9808 SCL | PA7 | 13 | I2C3_SCL | `I2C3_SCL` |
+| Green LED | PA3 | 9 | GPIO output | `LED_GREEN` |
+| Red LED | PA4 | 10 | GPIO output | `LED_RED` |
+| Blue LED | PA1 | 7 | GPIO output | `LED_BLUE` |
+| Debug UART TX | PA2 | 8 | USART2_TX (to debug header) | `UART_TX` |
+| SWDIO | PA13 | 23 | SWD | direct to header pin 2 |
+| SWCLK | PA14 | 24 | SWD | direct to header pin 4 |
+| NRST | NRST | 4 | Reset | `NRST` |
+| BOOT0 | PH3-BOOT0 | 31 | Boot | Pulled to GND (R1) |
+
+All other MCU pins are unused and marked no-connect.
 
 On the Nucleo-L432KC, USART2 TX (PA2) reaches the PC through the board's ST-LINK virtual COM port. On the custom PCB it goes to the debug UART header and needs a USB-serial adapter.
 
@@ -373,7 +413,7 @@ On the Nucleo-32 board, solder bridges SB16 and SB18 connect PA5 to PB7 and PA6 
 - The OLED and the sensor are on separate I2C buses
 - Sensor placement is critical for accurate readings (placed at PCB edge)
 - Designed for simplicity and first-pass success
-- Pin assignments were defined in STM32CubeMX during firmware development and will be re-verified in the schematic phase
+- Pin assignments were defined in STM32CubeMX during firmware development and were verified against the final schematic
 
 ---
 
