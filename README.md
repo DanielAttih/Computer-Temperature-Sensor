@@ -2,7 +2,7 @@
 
 Reads the internal air temperature of a PC case and displays the value on an OLED. LEDs give visual status feedback.
 
-**Status:** Firmware complete and tested on a Nucleo-L432KC dev board. Schematic complete (KiCad, ERC clean). PCB layout is next.
+**Status:** Firmware complete and tested on a Nucleo-L432KC dev board. Schematic complete (KiCad, ERC clean). PCB layout complete (DRC clean, schematic parity clean). Ordering boards from JLCPCB is next, followed by assembly and bring-up.
 
 ---
 
@@ -272,6 +272,8 @@ Net names in the schematic: `I2C1_SDA`, `I2C1_SCL`, `I2C3_SDA`, `I2C3_SCL`.
 
 Pushbutton: Panasonic EVQ-PUJ02K (or equivalent SMD 3 × 4 mm)
 
+- This is a **side-operated** switch: the actuator is pressed horizontally, from the side it faces. On the board it is oriented with the actuator facing the bottom edge, so it can be reached through a cutout in the case.
+
 - NRST → pushbutton → GND
 - 100 nF capacitor (C6) from NRST to GND, for noise immunity and button debounce
 - No external pull-up needed (NRST has an internal pull-up)
@@ -339,11 +341,12 @@ Added for debugging (2 mm pads, TP1 to TP6):
 - 2-layer PCB
 - Top layer: components + signals
 - Bottom layer: ground plane
-- Board size: ~50 mm × 40 mm
+- Board size: 54 mm × 46 mm
 - Shape: rectangular
-- 4 × M3 mounting holes
-- Board version number in silkscreen (v1.0)
-- Component labels and header pin labels in silkscreen
+- 4 × M3 mounting holes (3.2 mm), one in each corner
+- USB connector on the left edge, MCP9808 on the right edge (away from the LDO and OLED heat), OLED header at the top edge, LEDs, reset button and SWD header along the bottom edge
+- The OLED module (27 × 27 mm) plugs into its header and lies flat above the board; the case is planned around the OLED and LEDs, leaving the sensor exposed to the PC case air
+- Component reference designators in silkscreen (no board version text or header pin labels in v1.0; pin 1 of each header is marked by its square pad, and the pin order is documented above)
 
 ---
 
