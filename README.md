@@ -2,7 +2,7 @@
 
 Reads the internal air temperature of a PC case and displays the value on an OLED. LEDs give visual status feedback.
 
-**Status:** Firmware complete and tested on a Nucleo-L432KC dev board. Schematic complete (KiCad, ERC clean). PCB layout complete (DRC clean, schematic parity clean). Ordering boards from JLCPCB is next, followed by assembly and bring-up.
+**Status:** Firmware complete and tested on a Nucleo-L432KC dev board. Schematic complete (KiCad, ERC clean). PCB layout v2 complete (no DRC errors, schematic parity clean), with Gerber and drill files in `hardware/gerbers/`. Ordering boards from JLCPCB is next, followed by assembly and bring-up. The first layout, as originally posted, is tagged `v1.0-linkedin`; v2 swaps the OLED's male header for a female socket and rearranges the placement.
 
 ---
 
@@ -98,7 +98,7 @@ Link(s):
 
 Design choices:
 - Using **module (not bare display)**
-- Connected via **1×4 header (2.54 mm)**
+- Connected via a **1×4 female socket (2.54 mm)**: the module comes with male header pins soldered on, and they plug into the socket
 - On its **own I2C bus** (I2C1), separate from the sensor
 - 4.7 µF capacitor (C11) from 3.3V to GND at the header's power pin, for the display's pulsed current
 - The module has its own pull-ups (measured roughly 11–12 kΩ on SDA and 19–20 kΩ on SCL, in circuit). The board still has its own 4.7 kΩ pull-ups on this bus; the two sets sit in parallel. Mark them DNP if the module's pull-ups are later confirmed sufficient.
@@ -272,7 +272,7 @@ Net names in the schematic: `I2C1_SDA`, `I2C1_SCL`, `I2C3_SDA`, `I2C3_SCL`.
 
 Pushbutton: Panasonic EVQ-PUJ02K (or equivalent SMD 3 × 4 mm)
 
-- This is a **side-operated** switch: the actuator is pressed horizontally, from the side it faces. On the board it is oriented with the actuator facing the bottom edge, so it can be reached through a cutout in the case.
+- This is a **side-operated** switch: the actuator is pressed horizontally, from the side it faces. On the board it sits on the left edge with the actuator facing outward and overhanging the edge by about 0.4 mm, so it can be reached through a cutout in the case.
 
 - NRST → pushbutton → GND
 - 100 nF capacitor (C6) from NRST to GND, for noise immunity and button debounce
@@ -315,7 +315,7 @@ Added for debugging (2 mm pads, TP1 to TP6):
 | U3 | MCP9808 (MSOP-8) | Temperature sensor |
 | J_USB | Micro-USB (Amphenol 10118194-0001LF) | Power only |
 | J_SWD | 1×5 header | SWD |
-| J_OLED | 1×4 header | OLED module |
+| J_SSD1306 | 1×4 female socket | OLED module (plugs onto the module's header pins) |
 | J_UART | 1×2 header | Debug TX + GND |
 | SW1 | Panasonic EVQ-PUJ series pushbutton | Reset |
 | D1, D2, D3 | 0805 LEDs | Green (PA3), red (PA4), blue (PA1) |
@@ -340,13 +340,14 @@ Added for debugging (2 mm pads, TP1 to TP6):
 
 - 2-layer PCB
 - Top layer: components + signals
-- Bottom layer: ground plane
-- Board size: 54 mm × 46 mm
+- Bottom layer: ground plane (with a few short signal routes)
+- Board size: 51 mm × 50.5 mm
 - Shape: rectangular
-- 4 × M3 mounting holes (3.2 mm), one in each corner
-- USB connector on the left edge, MCP9808 on the right edge (away from the LDO and OLED heat), OLED header at the top edge, LEDs, reset button and SWD header along the bottom edge
-- The OLED module (27 × 27 mm) plugs into its header and lies flat above the board; the case is planned around the OLED and LEDs, leaving the sensor exposed to the PC case air
-- Component reference designators in silkscreen (no board version text or header pin labels in v1.0; pin 1 of each header is marked by its square pad, and the pin order is documented above)
+- 4 × M3 mounting holes (3.2 mm), one near each corner
+- USB connector (lower left) and reset button on the left edge, MCP9808 on the right edge (away from the LDO and OLED heat), OLED socket at the top edge, debug UART header at the top left, LEDs along the bottom, SWD header on the right side
+- The OLED module (27 × 27 mm) plugs into its socket and lies flat above the board. The SWD header is placed outside the module's footprint, so a programmer can be connected with the display installed. The case is planned around the OLED and LEDs, leaving the sensor exposed to the PC case air
+- Component reference designators in silkscreen (no board version text, header pin labels or mounting-hole labels in v2; pin 1 of each header is marked by its square pad, and the pin order is documented above)
+- Fabrication files for JLCPCB (Gerbers and drill files) are in `hardware/gerbers/`
 
 ---
 
